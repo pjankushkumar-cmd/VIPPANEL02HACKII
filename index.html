@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="theme-color" content="#080b14">
+<title>EARN WITH HACKII</title>
+<style>
+:root{color-scheme:dark;--bg:#080b14;--panel:#111827;--line:#263247;--muted:#8d9ab0;--cyan:#42e8d1;--white:#f5f7fb;--red:#ff647c}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -20%,#183047 0%,#0b1220 42%,var(--bg) 78%);font-family:Inter,system-ui,Arial,sans-serif;color:var(--white);display:flex;align-items:center;justify-content:center;padding:22px}
+.wrap{width:100%;max-width:430px}.brand{text-align:center;margin-bottom:28px}.brand .mark{font-size:12px;letter-spacing:5px;color:var(--cyan);font-weight:800}.brand h1{font-size:29px;letter-spacing:1.5px;margin:10px 0 5px;font-weight:900}.brand p{margin:0;color:var(--muted);font-size:11px;letter-spacing:2.5px}
+.panel{background:linear-gradient(155deg,rgba(22,32,50,.97),rgba(12,18,30,.98));border:1px solid var(--line);border-radius:23px;padding:25px 21px;box-shadow:0 22px 65px #0008}
+.kicker{font-size:11px;color:var(--muted);letter-spacing:2px;font-weight:800;margin-bottom:18px}
+label{display:block;font-size:12px;color:#bdc8d8;margin-bottom:9px}
+input{width:100%;height:53px;border-radius:13px;border:1px solid #33435b;background:#080e19;color:white;padding:0 15px;font-size:16px;outline:none;letter-spacing:1px}
+input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px #42e8d11c}
+button{width:100%;height:53px;border:0;border-radius:13px;margin-top:15px;background:linear-gradient(100deg,#22cdbb,#64f0d7);color:#041411;font-weight:900;font-size:15px;letter-spacing:1.4px;cursor:pointer}
+button:disabled{opacity:.55;cursor:wait}
+.telegram{display:block;text-align:center;margin-top:17px;color:var(--cyan);text-decoration:none;font-size:13px;font-weight:700}
+.error{color:var(--red);font-size:12px;text-align:center;min-height:18px;margin-top:10px}
+#app{display:none}.topline{display:flex;justify-content:space-between;align-items:center;margin-bottom:23px}
+.live{font-size:10px;letter-spacing:2px;color:var(--cyan);font-weight:900}.clock{font-variant-numeric:tabular-nums;color:#d6dfed;font-size:13px}
+.period-label{text-align:center;color:var(--muted);font-size:11px;letter-spacing:2px;font-weight:800}
+.period{text-align:center;font-size:19px;font-weight:800;letter-spacing:1px;margin:8px 0 24px;overflow-wrap:anywhere}
+.resultbox{border:1px solid #2b4153;background:linear-gradient(145deg,#0c1b29,#101a29);border-radius:19px;padding:22px 15px;text-align:center}
+.result-label{font-size:11px;letter-spacing:2.5px;color:var(--muted);font-weight:800}
+.number{font-size:94px;line-height:1.12;font-weight:950;letter-spacing:-5px;margin:9px 0 4px;color:var(--cyan);text-shadow:0 0 32px #42e8d13b;transition:color .2s,text-shadow .2s}.number.red{color:#ff5368;text-shadow:0 0 30px #ff536866}.number.green{color:#27e58a;text-shadow:0 0 30px #27e58a66}.size.red{color:#ff7888}.size.green{color:#55f0a4}
+.size{font-size:20px;letter-spacing:4px;font-weight:900}
+.meta{display:flex;justify-content:space-between;gap:12px;margin-top:19px;color:var(--muted);font-size:11px}
+.meta span:last-child{text-align:right}
+.countdown{text-align:center;margin-top:23px}.countdown strong{display:block;font-size:27px;font-variant-numeric:tabular-nums;margin-top:5px}
+.status{text-align:center;color:var(--muted);font-size:11px;line-height:1.5;margin-top:17px;min-height:18px}
+.footer{text-align:center;color:#66758d;font-size:10px;letter-spacing:1px;margin-top:18px}
+.sound-row{display:flex;align-items:center;justify-content:space-between;margin-top:17px;padding-top:14px;border-top:1px solid #263247}
+.sound-toggle{display:flex;align-items:center;gap:8px;margin:0;color:#cbd5e1;font-size:12px;cursor:pointer}
+.sound-toggle input{width:16px;height:16px;accent-color:var(--cyan)}
+.sound-note{font-size:10px;color:var(--muted)}
+.alert-overlay{position:fixed;inset:0;z-index:20;display:none;align-items:center;justify-content:center;padding:22px;background:#02050bd9;backdrop-filter:blur(8px)}
+.alert-card{width:100%;max-width:320px;text-align:center;padding:30px 22px;border-radius:22px;background:#111c2b;border:1px solid #33445a;box-shadow:0 20px 80px #000a;animation:pop .22s ease-out}
+.alert-card.win{border-color:#28d8a5}.alert-card.loss{border-color:#ff647c}
+.alert-title{font-size:35px;font-weight:950;letter-spacing:3px;margin:4px 0 8px}
+.alert-card.win .alert-title{color:#42e8b5}.alert-card.loss .alert-title{color:#ff647c}
+.alert-detail{font-size:13px;color:#c5d0df;line-height:1.6}
+.alert-timer{font-size:10px;color:#8493a9;margin-top:17px;letter-spacing:1px}
+@keyframes pop{from{transform:scale(.88);opacity:.2}to{transform:scale(1);opacity:1}}
+.hidden{display:none!important}
+
+/* Lightweight animated premium skin */
+body{background:radial-gradient(ellipse at 12% 8%,#39216b66,transparent 36%),radial-gradient(ellipse at 92% 86%,#075b7166,transparent 34%),linear-gradient(145deg,#080b18,#11142a 55%,#080b18);background-size:140% 140%;animation:bgDrift 18s ease-in-out infinite alternate}
+@keyframes bgDrift{from{background-position:0% 0%,100% 100%,0% 0%}to{background-position:30% 15%,75% 80%,100% 100%}}
+.brand .mark{color:#8c83ff;text-shadow:0 0 18px #8c83ff66}
+.brand h1{background:linear-gradient(90deg,#fff,#9ceeff,#c4a5ff,#fff);background-size:220% auto;color:transparent;background-clip:text;-webkit-background-clip:text;animation:shine 7s linear infinite}
+@keyframes shine{to{background-position:220% center}}
+.panel{position:relative;overflow:hidden;background:linear-gradient(145deg,#171b34f5,#10182af5);border-color:#6570ad66;box-shadow:0 24px 70px #0009,0 0 28px #6558d522;animation:panelIn .55s cubic-bezier(.2,.8,.2,1) both}
+.panel:before{content:"";position:absolute;inset:0 0 auto;height:2px;background:linear-gradient(90deg,transparent,#54e7ff,#a78bfa,#ff78b7,transparent);opacity:.9}
+@keyframes panelIn{from{opacity:0;transform:translateY(12px) scale(.99)}to{opacity:1;transform:none}}
+button{background:linear-gradient(100deg,#43d9d2,#7d8cff 55%,#c18cff);color:#07101d;box-shadow:0 8px 24px #6e7dff33;transition:transform .18s,filter .18s}
+button:active{transform:scale(.985);filter:brightness(1.1)}
+input{background:#090e20;border-color:#48527b}
+input:focus{border-color:#8d8bff;box-shadow:0 0 0 3px #8d8bff25}
+.resultbox{background:radial-gradient(circle at 50% 0%,#3e4a8a55,transparent 58%),linear-gradient(145deg,#111b36,#101326);border-color:#6979c477;box-shadow:inset 0 1px #ffffff0b,0 12px 28px #0003}
+.number{animation:numberIn .35s ease-out}
+@keyframes numberIn{from{opacity:.3;transform:translateY(7px) scale(.94)}to{opacity:1;transform:none}}
+.number.red{color:#ff5d78;text-shadow:0 0 28px #ff536866}
+.number.green{color:#38e69b;text-shadow:0 0 28px #27e58a66}
+.live{color:#57edc5}.countdown strong{color:#d5d6ff;text-shadow:0 0 18px #8b83ff44}
+.status{transition:color .2s}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation:none!important;transition:none!important}}
+
+</style>
+</head>
+<body>
+<main class="wrap">
+  <header class="brand">
+    <div class="mark">◆ HACKII NETWORK ◆</div>
+    <h1>EARN WITH HACKII</h1>
+    <p>SMART ANALYSIS SYSTEM</p>
+  </header>
+
+  <section class="panel" id="login">
+    <div class="kicker">MEMBER ACCESS</div>
+    <label for="key">ENTER START KEY</label>
+    <input id="key" type="password" placeholder="Enter your access key" autocomplete="off">
+    <button id="start">START</button>
+    <a class="telegram" href="https://t.me/+8Lms2P9p3BozY2M1" target="_blank" rel="noopener">JOIN TELEGRAM CHANNEL ↗</a>
+    <div class="error" id="loginError"></div>
+  </section>
+
+  <section class="panel" id="app">
+    <div class="topline"><span class="live">● LIVE ANALYSIS</span><span class="clock" id="clock">--:--:--</span></div>
+    <div class="period-label">UPCOMING PERIOD</div>
+    <div class="period" id="period">WAITING…</div>
+    <div class="resultbox">
+      <div class="result-label">NEXT ESTIMATE</div>
+      <div class="number" id="number">—</div>
+      <div class="size" id="size">---</div>
+    </div>
+    <div class="meta"><span id="source">Waiting for API data</span><span id="updated">Not updated</span></div>
+    <div class="countdown"><div class="result-label">NEXT UPDATE IN</div><strong id="timer">00:00</strong></div>
+    <div class="status" id="status">Connecting to result source…</div>
+    <div class="sound-row">
+      <label class="sound-toggle"><input type="checkbox" id="soundOn" checked> Sound ON</label>
+      <span class="sound-note">WIN / LOSS alerts</span>
+    </div>
+    <div class="footer">HACKII · LIVE WALL-CLOCK SYNC</div>
+  </section>
+</main>
+
+<div class="alert-overlay" id="alertOverlay" role="alert" aria-live="assertive">
+  <div class="alert-card" id="alertCard">
+    <div class="alert-title" id="alertTitle">WIN!</div>
+    <div class="alert-detail" id="alertDetail">Result verified</div>
+    <div class="alert-timer" id="alertTimer">CLOSING IN 5 SECONDS</div>
+  </div>
+</div>
+<script>
+(() => {
+  "use strict";
+  const API_URL = "https://draw.ar-lottery01.com/WinGo/WinGo_1M/GetHistoryIssuePage.json?pageNo=1";
+  const ACCESS_KEY = "HACKIIVIP10";
+  const FIXED_SALT = "H-8-2-5-6";
+  const $ = id => document.getElementById(id);
+  let active = false;
+  let pending = null;
+  let lastSettledIssue = "";
+  let lastPredictionBaseIssue = "";
+  let lastAlertAt = 0;
+  let audioContext = null;
+  let pollBusy = false;
+  let pollTimer = null;
+  let lastWallMinute = "";
+  let internetEpochAtSync = 0;
+  let monotonicAtSync = 0;
+  let timeSyncBusy = false;
+  let timeSyncLabel = "Internet time not synced";
+
+  function getList(payload) {
+    const candidates = [payload?.data?.list, payload?.data?.records, payload?.data?.items,
+      payload?.result?.list, payload?.result?.records, payload?.list, payload?.records,
+      payload?.items, Array.isArray(payload?.data) ? payload.data : null];
+    for (const value of candidates) if (Array.isArray(value)) return value;
+    return [];
+  }
+  function getIssue(row) {
+    return row?.issueNumber ?? row?.issue ?? row?.period ?? row?.issue_no ?? row?.drawId ?? null;
+  }
+  function getNumber(row) {
+    const raw = row?.number ?? row?.result ?? row?.openNumber ?? row?.winNumber ?? row?.value;
+    if (raw === undefined || raw === null) return null;
+    const match = String(raw).match(/\d+/);
+    return match ? Number(match[0]) % 10 : null;
+  }
+  function sizeOf(n) { return n <= 4 ? "SMALL" : "BIG"; }
+  // Number colour rule requested: even digits RED, odd digits GREEN.
+  function colorOf(n) { return n % 2 === 0 ? "red" : "green"; }
+  function paintEstimate(digit) {
+    $("number").className = "number " + colorOf(digit);
+    $("size").className = "size " + colorOf(digit);
+  }
+  function incrementIssue(issue) {
+    const s = String(issue ?? "");
+    const m = s.match(/^(.*?)(\d+)$/);
+    if (!m) return "—";
+    return m[1] + String(BigInt(m[2]) + 1n).padStart(m[2].length, "0");
+  }
+  async function sha256(text) {
+    const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(text));
+    return Array.from(new Uint8Array(digest), b => b.toString(16).padStart(2, "0")).join("");
+  }
+  async function ensureAudio() {
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) return null;
+      if (!audioContext) audioContext = new Ctx();
+      if (audioContext.state === "suspended") await audioContext.resume();
+      return audioContext;
+    } catch (_) { return null; }
+  }
+  async function playTone(kind) {
+    if (!$("soundOn").checked) return;
+    const ctx = await ensureAudio();
+    if (!ctx) return;
+    const notes = kind === "win" ? [660, 880, 1100] : [260, 190];
+    let at = ctx.currentTime;
+    notes.forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = kind === "win" ? "sine" : "triangle";
+      osc.frequency.setValueAtTime(freq, at);
+      gain.gain.setValueAtTime(0.0001, at);
+      gain.gain.exponentialRampToValueAtTime(0.12, at + 0.025);
+      gain.gain.exponentialRampToValueAtTime(0.0001, at + 0.19);
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.start(at); osc.stop(at + 0.21);
+      at += 0.23;
+    });
+  }
+  function showAlert(kind, predicted, actual, issue) {
+    const overlay = $("alertOverlay");
+    const card = $("alertCard");
+    card.className = "alert-card " + kind;
+    $("alertTitle").textContent = kind === "win" ? "WIN!" : "LOSS!";
+    $("alertDetail").textContent =
+      "Period " + issue + " · Predicted " + predicted + " · Actual " + actual;
+    overlay.style.display = "flex";
+    $("alertTimer").textContent = "CLOSING IN 5 SECONDS";
+    const shownAt = Date.now();
+    lastAlertAt = shownAt;
+    playTone(kind);
+    setTimeout(() => {
+      if (lastAlertAt === shownAt) overlay.style.display = "none";
+    }, 5000);
+  }
+  async function makePrediction(valid) {
+    // Same period always produces the same estimate on every device.
+    // No per-device random entropy or device clock is used.
+    const latest = valid[0];
+    const upcoming = incrementIssue(latest.issue);
+    lastPredictionBaseIssue = latest.issue;
+    const digest = new Uint8Array(await crypto.subtle.digest(
+      "SHA-256",
+      new TextEncoder().encode(FIXED_SALT + "|HACKII|PERIOD|" + upcoming)
+    ));
+
+    // Deterministic PRNG post-mix.
+    let state = (
+      (digest[0] << 24) |
+      (digest[1] << 16) |
+      (digest[2] << 8) |
+      digest[3]
+    ) >>> 0;
+    if (state === 0) state = 0x6d2b79f5;
+    state ^= (
+      (digest[4] << 24) |
+      (digest[5] << 16) |
+      (digest[6] << 8) |
+      digest[7]
+    ) >>> 0;
+    state ^= state << 13; state >>>= 0;
+    state ^= state >>> 17;
+    state ^= state << 5; state >>>= 0;
+    const digit = (state >>> 0) % 10;
+
+    pending = { issue: upcoming, digit, size: sizeOf(digit) };
+    $("period").textContent = upcoming;
+    $("number").textContent = digit;
+    $("size").textContent = pending.size;
+    paintEstimate(digit);
+    $("source").textContent = "Live API · " + valid.length + " valid results";
+    $("updated").textContent = "Updated " + formatIndiaTime(getIndiaNowMs(), {
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true
+    }) + " IST";
+    $("status").textContent = "Shared estimate ready · waiting for API result " + upcoming;
+  }
+
+  function compareIssue(a, b) {
+    const aa = String(a).match(/^(.*?)(\d+)$/);
+    const bb = String(b).match(/^(.*?)(\d+)$/);
+    if (!aa || !bb || aa[1] !== bb[1]) return 0;
+    try {
+      const x = BigInt(aa[2]), y = BigInt(bb[2]);
+      return x === y ? 0 : (x > y ? 1 : -1);
+    } catch (_) { return 0; }
+  }
+
+  function scheduleNextPoll(delay = 2500) {
+    if (!active) return;
+    if (pollTimer) clearTimeout(pollTimer);
+    pollTimer = setTimeout(() => {
+      pollTimer = null;
+      pollApi();
+    }, delay);
+  }
+
+  async function pollApi() {
+    if (!active || pollBusy) return;
+    pollBusy = true;
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+    try {
+      const separator = API_URL.includes("?") ? "&" : "?";
+      const response = await fetch(API_URL + separator + "_ts=" + Date.now(), {
+        method: "GET",
+        cache: "no-store",
+        headers: { "Accept": "application/json", "Cache-Control": "no-cache" },
+        signal: controller.signal
+      });
+      if (!response.ok) throw new Error("API HTTP " + response.status);
+      const payload = await response.json();
+      const rows = getList(payload);
+      const valid = rows.map(r => ({
+        issue: String(getIssue(r) ?? ""),
+        number: getNumber(r)
+      })).filter(r => r.issue && Number.isInteger(r.number));
+
+      if (!valid.length) throw new Error("API data format not recognized");
+      // Never assume the API's array order: explicitly select the highest issue.
+      valid.sort((a, b) => compareIssue(b.issue, a.issue));
+      const latest = valid[0];
+      $("source").textContent = "Live API · " + valid.length + " valid results";
+      $("updated").textContent = "API checked " + formatIndiaTime(getIndiaNowMs(), {hour:"2-digit",minute:"2-digit",second:"2-digit",hour12:true}) + " IST";
+
+      if (pending) {
+        const exact = valid.find(row => row.issue === pending.issue);
+        if (exact && lastSettledIssue !== pending.issue) {
+          const actualSize = sizeOf(exact.number);
+          const resultKind = actualSize === pending.size ? "win" : "loss";
+          lastSettledIssue = pending.issue;
+          showAlert(resultKind, pending.size + " (" + pending.digit + ")",
+            actualSize + " (" + exact.number + ")", pending.issue);
+          $("status").textContent = "API result verified · " + resultKind.toUpperCase();
+          pending = null;
+        } else if (compareIssue(latest.issue, pending.issue) > 0) {
+          $("status").textContent = "API moved past " + pending.issue + " · syncing latest round";
+          pending = null;
+        }
+      }
+
+      // When the target result arrives, pending is cleared above. Generate the
+      // NEXT period from the newest API issue, even when latest.issue equals
+      // lastSettledIssue. lastPredictionBaseIssue prevents repeated regeneration.
+      if (!pending && latest.issue !== lastPredictionBaseIssue) {
+        await makePrediction(valid);
+      } else if (pending) {
+        $("status").textContent = "Waiting for API result · target " + pending.issue;
+      } else {
+        $("status").textContent = "Latest result synced · next estimate is ready";
+      }
+    } catch (err) {
+      const message = err?.name === "AbortError" ? "request timed out" : (err?.message || "connection error");
+      $("status").textContent = "API refresh failed · " + message + " · retrying";
+      $("source").textContent = "API reconnecting";
+    } finally {
+      clearTimeout(timeout);
+      pollBusy = false;
+      scheduleNextPoll(2500);
+    }
+  }
+  function getIndiaNowMs() {
+    if (!internetEpochAtSync) return 0;
+    // Advance the last trusted internet timestamp using a monotonic browser clock,
+    // never the device's wall-clock date/time.
+    return internetEpochAtSync + (performance.now() - monotonicAtSync);
+  }
+
+  function formatIndiaTime(epochMs, options) {
+    return new Intl.DateTimeFormat("en-IN", {
+      timeZone: "Asia/Kolkata",
+      ...options
+    }).format(new Date(epochMs));
+  }
+
+  async function syncInternetTime() {
+    if (timeSyncBusy) return false;
+    timeSyncBusy = true;
+    const endpoints = [
+      "https://worldtimeapi.org/api/timezone/Asia/Kolkata",
+      "https://timeapi.io/api/Time/current/zone?timeZone=Asia/Kolkata"
+    ];
+    try {
+      let synced = false;
+      for (const endpoint of endpoints) {
+        const started = performance.now();
+        const controller = new AbortController();
+        const timeout = setTimeout(() => controller.abort(), 7000);
+        try {
+          const response = await fetch(endpoint + (endpoint.includes("?") ? "&" : "?") + "_=" + Math.floor(started), {
+            cache: "no-store",
+            headers: { "Accept": "application/json", "Cache-Control": "no-cache" },
+            signal: controller.signal
+          });
+          if (!response.ok) throw new Error("Time server HTTP " + response.status);
+          const data = await response.json();
+          const received = performance.now();
+          let serverEpochMs = 0;
+          if (Number.isFinite(data.unixtime)) {
+            serverEpochMs = data.unixtime * 1000;
+          } else if (data.datetime) {
+            serverEpochMs = Date.parse(data.datetime);
+          } else if (data.dateTime) {
+            serverEpochMs = Date.parse(data.dateTime);
+          }
+          if (!Number.isFinite(serverEpochMs) || serverEpochMs < 1) {
+            throw new Error("Unrecognized internet time response");
+          }
+          // Approximate the server timestamp at the midpoint of the network request.
+          internetEpochAtSync = serverEpochMs + ((received - started) / 2);
+          monotonicAtSync = received;
+          timeSyncLabel = "Internet time · IST";
+          synced = true;
+          break;
+        } catch (_) {
+          // Try the backup internet time provider.
+        } finally {
+          clearTimeout(timeout);
+        }
+      }
+      if (!synced) {
+        timeSyncLabel = "Internet time unavailable · retrying";
+        $("status").textContent = "Cannot reach an Indian internet time server · retrying";
+      }
+      return synced;
+    } finally {
+      timeSyncBusy = false;
+    }
+  }
+
+  function updateClock() {
+    if (!internetEpochAtSync) {
+      $("clock").textContent = "SYNCING IST…";
+      $("timer").textContent = "--:--";
+      return;
+    }
+    const nowMs = getIndiaNowMs();
+    const now = new Date(nowMs);
+    $("clock").textContent = formatIndiaTime(nowMs, {
+      hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true
+    }) + " IST";
+    const seconds = now.getUTCSeconds(); // epoch seconds align to the minute boundary
+    const remaining = 60 - seconds;
+    $("timer").textContent = "00:" + String(remaining).padStart(2, "0");
+    const minuteKey = formatIndiaTime(nowMs, {
+      year: "numeric", month: "2-digit", day: "2-digit",
+      hour: "2-digit", minute: "2-digit", hour12: false
+    });
+    if (active && minuteKey !== lastWallMinute) {
+      lastWallMinute = minuteKey;
+      if (!pollBusy) pollApi();
+    }
+  }
+  $("start").addEventListener("click", async () => {
+    if ($("key").value.trim() !== ACCESS_KEY) {
+      $("loginError").textContent = "Invalid key. Please try again.";
+      return;
+    }
+    if (!window.crypto?.subtle || !window.crypto?.getRandomValues) {
+      $("loginError").textContent = "This browser does not support Web Crypto.";
+      return;
+    }
+    $("start").disabled = true;
+    $("start").textContent = "SYNCING INTERNET TIME…";
+    const timeReady = await syncInternetTime();
+    if (!timeReady) {
+      $("start").disabled = false;
+      $("start").textContent = "START";
+      $("loginError").textContent = "Indian internet time is unavailable. Please try again.";
+      return;
+    }
+    active = true;
+    await ensureAudio();
+    $("login").style.display = "none";
+    $("app").style.display = "block";
+    $("status").textContent = "Internet time synchronized · India Standard Time";
+    lastWallMinute = "";
+    updateClock();
+    pollApi();
+    setInterval(updateClock, 250);
+    // Re-sync trusted India internet time every minute.
+    setInterval(async () => {
+      await syncInternetTime();
+      updateClock();
+    }, 60000);
+    document.addEventListener("visibilitychange", async () => {
+      if (active && !document.hidden) {
+        await syncInternetTime();
+        updateClock();
+        pollApi();
+      }
+    });
+    window.addEventListener("pageshow", () => {
+      if (active) pollApi();
+    });
+    window.addEventListener("focus", () => {
+      if (active) pollApi();
+    });
+    window.addEventListener("online", async () => {
+      if (active) {
+        await syncInternetTime();
+        updateClock();
+        pollApi();
+      }
+    });
+  });
+  $("key").addEventListener("keydown", e => { if (e.key === "Enter") $("start").click(); });
+})();
+</script>
+</body>
+</html>
